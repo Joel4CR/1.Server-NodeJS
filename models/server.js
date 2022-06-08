@@ -12,6 +12,7 @@ constructor(){
         auth:       "/auth",
         category:   "/auth",
         product:    '/auth',
+        find:       "/api",
         user:       "/api/users"
     }
 
@@ -31,6 +32,7 @@ constructor(){
     routes(){
         this.app.use(this.path.auth,require("../routes/auth.routes"))
         this.app.use(this.path.category,require("../routes/categories.routes"))
+        this.app.use(this.path.find,require("../routes/find.routes"))
         this.app.use(this.path.product,require("../routes/product.routes"))
         this.app.use(this.path.user ,require("../routes/users.routes"))
 
