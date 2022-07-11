@@ -10,7 +10,7 @@ const router=Router()
 router.get('/product',getProducts);
 router.get('/product/:id',[
     tokenValidate,
-    check('id','El ID no es de mongo').isMongoId,
+    check('id','El ID no es de mongo').isMongoId(),
     check('id').custom(idExistProduct),
     validateFields
 ],getProduct);
@@ -21,13 +21,13 @@ router.post('/product',[
 ],postProduct);
 router.put('/product/:id',[
     tokenValidate,
-    check('id','El ID no es de mongo').isMongoId,
+    check('id','El ID no es de mongo').isMongoId(),
     check('id').custom(idExistProduct),
     validateFields
 ],putProduct);
 router.delete('/product/:id',[
     tokenValidate,
-    check('id','El ID no es de mongo').isMongoId,
+    check('id','El ID no es de mongo').isMongoId(),
     check('id').custom(idExistProduct),
     validateFields
 ],deleteProduct);

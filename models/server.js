@@ -1,7 +1,8 @@
 const { json } = require("express");
 const express=require("express");
+const fileUpload = require("express-fileupload");
 const {dbConnection} = require("../database/config");
-
+const cors= require('cors');
  
 class Server{
 
@@ -13,13 +14,14 @@ constructor(){
         category:   "/auth",
         product:    '/auth',
         find:       "/api",
+        upload:     "/api",
         user:       "/api/users"
     }
 
     //Connect to DB
     this.dbConnect();
 
-    //MIddleware
+    //Middleware
     this.middleware();
 
     //Routes 
@@ -34,6 +36,7 @@ constructor(){
         this.app.use(this.path.category,require("../routes/categories.routes"))
         this.app.use(this.path.find,require("../routes/find.routes"))
         this.app.use(this.path.product,require("../routes/product.routes"))
+        this.app.use(this.path.upload ,require("../routes/uploads.routes"))
         this.app.use(this.path.user ,require("../routes/users.routes"))
 
     }
@@ -42,8 +45,17 @@ constructor(){
         //Public directory
         this.app.use(express.static("public"));
 
+        this.app.use(cors());
+
         //Read and parser body
         this.app.use(json())
+
+        //Use temp files instead of memory for managing the upload process
+        this.app.use(fileUpload({
+            useTempFiles : true,
+            tempFileDir : '/tmp/',
+            createParentPath: true
+        }));
     }
 
     listen(){
@@ -53,4 +65,4 @@ constructor(){
 }; 
 
 
-module.exports=Server;
+module.exports=Server; 

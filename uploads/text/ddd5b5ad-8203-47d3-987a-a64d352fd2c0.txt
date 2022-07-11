@@ -1,0 +1,5 @@
+ C:\Program Files\Microsoft Office\Office16
+cscript ospp.vbs /inpkey:NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP
+cscript ospp.vbs /sethst:172.19.15.11
+cscript ospp.vbs /act
+
