@@ -30,6 +30,9 @@ const productSchema=Schema({
     available:{
         type:String,
         default:true
+    },
+    img:{
+        type:String
     }
 
 });

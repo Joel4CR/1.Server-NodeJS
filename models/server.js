@@ -14,7 +14,7 @@ constructor(){
         category:   "/auth",
         product:    '/auth',
         find:       "/api",
-        upload:     "/api",
+        upload:     "/api/upload",
         user:       "/api/users"
     }
 
