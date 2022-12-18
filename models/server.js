@@ -45,7 +45,7 @@ constructor(){
         //Public directory
         this.app.use(express.static("public"));
 
-        this.app.use(cors());
+        this.app.use(cors({ origin: true, credentials: true }));
 
         //Read and parser body
         this.app.use(json())

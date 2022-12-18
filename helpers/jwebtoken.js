@@ -1,5 +1,6 @@
 const { response } = require("express");
-const jwt=require("jsonwebtoken")
+const jwt=require("jsonwebtoken");
+const Users = require("../models/users");
 
 const generateJWT=(uid="")=>{
 
@@ -18,11 +19,42 @@ const generateJWT=(uid="")=>{
             }
         })
 
-    })
+    })}
 
 
+    const checkJWT = async( token = '') => {
+       
+        try {
+            
+            if(  token.length < 10 ) {
+                return null;
+            }
+         
+            const { uid } = jwt.verify( token, process.env.SECRETOPRIVATEKEY );
+          
+            const user = await Users.findById( uid );
 
-
-}
-
-module.exports={generateJWT}
+            if ( user ) {
+                if ( user.state ) {
+                    return user;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+    
+        } catch (error) {
+            return null;
+        }
+    
+    }
+    
+  
+    
+    module.exports = {
+        generateJWT,
+        comprobarJWT: checkJWT,
+        
+    }
+    
