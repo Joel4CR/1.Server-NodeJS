@@ -1,5 +1,7 @@
+
+
 const url = ( window.location.hostname.includes('localhost') )
-            ? 'http://localhost:8080/api/auth/'
+            ? 'http://localhost:8080/auth/'
             : 'https://restserver-curso-fher.herokuapp.com/api/auth/';
 
 let usuario = null;
@@ -28,10 +30,10 @@ const validarJWT = async() => {
         headers: { 'x-token': token }
     });
 
-    const { usuario: userDB, token: tokenDB } = await resp.json();
+    const { user: userDB, token: tokenDB } = await resp.json();
     localStorage.setItem('token', tokenDB );
-    usuario = userDB;
-    document.title = usuario.nombre;
+    user = userDB;
+    document.title = user.name
 
     await conectarSocket();
     
@@ -53,8 +55,9 @@ const conectarSocket = async() => {
         console.log('Sockets offline')
     });
 
-    socket.on('recibir-mensajes', dibujarMensajes );
-    socket.on('usuarios-activos', dibujarUsuarios );
+    socket.on('recive-msg', showMSG );
+ 
+    socket.on('users-online', showUsers );
 
     socket.on('mensaje-privado', ( payload ) => {
         console.log('Privado:', payload )
@@ -62,60 +65,66 @@ const conectarSocket = async() => {
 
 
 }
-
-const dibujarUsuarios = ( usuarios = []) => {
-
+const showUsers = ( users = []) => {
+    
     let usersHtml = '';
-    usuarios.forEach( ({ nombre, uid }) => {
 
+    console.log(users);
+
+    users.forEach( ({ name, uid }) => {
+       
+        const {_id}=uid
+        
         usersHtml += `
             <li>
                 <p>
-                    <h5 class="text-success"> ${ nombre } </h5>
-                    <span class="fs-6 text-muted">${ uid }</span>
+                    <h5 class="text-success"> ${ name } </h5>
+                    <span class="fs-6 text-muted">${ _id }</span>
                 </p>
             </li>
         `;
     });
 
     ulUsuarios.innerHTML = usersHtml;
-
-}
-
-
-const dibujarMensajes = ( mensajes = []) => {
-
-    let mensajesHTML = '';
-    mensajes.forEach( ({ nombre, mensaje }) => {
-
-        mensajesHTML += `
-            <li>
-                <p>
-                    <span class="text-primary">${ nombre }: </span>
-                    <span>${ mensaje }</span>
-                </p>
-            </li>
-        `;
-    });
-
-    ulMensajes.innerHTML = mensajesHTML;
-
-}
-
-
-txtMensaje.addEventListener('keyup', ({ keyCode }) => {
     
-    const mensaje = txtMensaje.value;
+}
+
+txtMensaje.addEventListener('keyup', ({ keyCode }) => {                 // keyup leer cada tecla  
+    
+    const msg = txtMensaje.value;
     const uid     = txtUid.value;
 
-    if( keyCode !== 13 ){ return; }
-    if( mensaje.length === 0 ){ return; }
+    if( keyCode !== 13 ){ return; }                                    // keycode de enter es 13                 
+    if( msg.length === 0 ){ return; }
 
-    socket.emit('enviar-mensaje', { mensaje, uid });
+    socket.emit('send-msg', { msg, uid });
 
     txtMensaje.value = '';
 
 })
+
+const showMSG = ( message = []) => {
+    
+    let mensajesHTML = '';
+    message.forEach( ({ name,  message }) => {
+
+        console.log(name, message);
+        mensajesHTML += `
+            <li>
+                <p>
+                    <span class="text-primary">${ name }: </span>
+                    <span>${ message }</span>
+                    </p>
+                    </li>
+        `;
+    });
+
+    ulMensajes.innerHTML = mensajesHTML;
+    
+}
+
+
+/* 
 
 
 btnSalir.addEventListener('click', ()=> {
@@ -128,24 +137,12 @@ btnSalir.addEventListener('click', ()=> {
         window.location = 'index.html';
     });
 });
-
+ */
 const main = async() => {
     // Validar JWT
     await validarJWT();
 }
 
-(()=>{
-    gapi.load('auth2', () => {
-        gapi.auth2.init();
-        main();
-    });
-})();
 
-
-
-
-
-
-
-// main();
+ main();
 

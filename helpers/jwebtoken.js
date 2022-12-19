@@ -54,7 +54,7 @@ const generateJWT=(uid="")=>{
     
     module.exports = {
         generateJWT,
-        comprobarJWT: checkJWT,
+        checkJWT,
         
     }
     

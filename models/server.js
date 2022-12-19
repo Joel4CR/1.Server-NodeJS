@@ -3,11 +3,14 @@ const express=require("express");
 const fileUpload = require("express-fileupload");
 const {dbConnection} = require("../database/config");
 const cors= require('cors');
+const { socketController } = require("../sockets/socketController");
  
 class Server{
 
 constructor(){
     this.app=express();
+    this.server = require('http').createServer( this.app ); // or const
+     this.io     = require('socket.io')( this.server );	//  or const
 
     this.path={
         auth:       "/auth",
@@ -26,6 +29,9 @@ constructor(){
 
     //Routes 
     this.routes();
+
+    //Socket Config
+	this.sockets()
 };
     async dbConnect(){
         await dbConnection();
@@ -58,8 +64,13 @@ constructor(){
         }));
     }
 
+    sockets() 
+	{
+        this.io.on('connection',(socket)=> socketController(socket, this.io));  //controller is the server controller of sockets
+	} 
+
     listen(){
-        this.app.listen(process.env.PORT,()=>console.log(`Server started on port ${process.env.PORT}`))
+        this.server.listen(process.env.PORT,()=>console.log(`Server started on port ${process.env.PORT}`))
     }
 
 }; 
