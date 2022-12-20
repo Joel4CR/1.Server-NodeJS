@@ -59,7 +59,7 @@ const conectarSocket = async() => {
  
     socket.on('users-online', showUsers );
 
-    socket.on('mensaje-privado', ( payload ) => {
+    socket.on('private-msg', ( payload ) => {
         console.log('Privado:', payload )
     });
 

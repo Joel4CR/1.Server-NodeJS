@@ -24,6 +24,11 @@ const socketController=async(socket=new Socket(), io)=>{
     chatMessage.connectUser(user)
     //Send Users coonnected
     io.emit('users-online', chatMessage.userArray)
+    socket.emit('recive-msg',chatMessage.showLast10)
+
+    //Connect to a new Chatroom
+
+    socket.join(user.id)
 
     //Delete users desconnected
     socket.on('disconnect',()=> {
@@ -31,7 +36,14 @@ const socketController=async(socket=new Socket(), io)=>{
         io.emit('users-online', chatMessage.userArray)
     })
 
+    //Send Public msg
     socket.on('send-msg', ({uid,msg})=>{
+        user.id?
+        //Private MSG
+        socket.to(uid).emit("private-msg",{de:user.name,msg})
+        :
+        //Public MSG
+
         chatMessage.sendMessage(uid,user.name,msg)
         io.emit('recive-msg',chatMessage.showLast10)
     })
